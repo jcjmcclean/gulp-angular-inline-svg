@@ -63,7 +63,6 @@ angular
 	});
 
 function iconController(ICONS, $sce) {
-	console.log('happened');
 	this.markup = $sce.trustAsHtml(ICONS[this.name]);
 }
 ```
