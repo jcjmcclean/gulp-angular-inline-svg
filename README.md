@@ -1,4 +1,4 @@
-# gulp-angular-inline-svg
+# melon-gulp-angular-inline-svg
 
 You:
 - have SVG files you’d like to use
@@ -26,12 +26,17 @@ npm install gulp-angular-inline-svg
 var gulp = require( 'gulp' );
 var icons = require( 'gulp-angular-inline-svg' );
 
-gulp.task( 'icons', function() {
-  gulp.src( './icons/*.svg' )
-    .pipe( icons({
-      module: 'myApp',
-    }) )
-    .pipe( gulp.dest( './' ) );
+gulp.task('icons', function(cb) {
+	pump([
+		gulp.src('./app/assets/icons/*.svg'),
+		icons({
+			module: 'app',
+			constant: 'ICONS',
+			optimize: true,
+			file: 'icon.constant.js'
+		}),
+		gulp.dest('./app/components/common/config')
+	], cb);
 });
 ```
 
@@ -48,15 +53,18 @@ The best way to use this is through a component like this:
 
 ```
 angular
-  .module( 'myApp' )
-  .component( 'svg-icon', {
-    template: '{{ $ctrl.markup }}',
-    controller: mctIconController,
-    bindings: { name: '@' },
-  });
+	.module('app')
+	.component('icon', {
+		controller: iconController,
+		template: '<span ng-bind-html="$ctrl.markup"></span>',
+		bindings: {
+			name: '@'
+		}
+	});
 
-function iconController( ICONS, $sce ) {
-  this.markup = $sce.trustAsHtml( ICONS[ this.name] );
+function iconController(ICONS, $sce) {
+	console.log('happened');
+	this.markup = $sce.trustAsHtml(ICONS[this.name]);
 }
 ```
 
@@ -64,42 +72,4 @@ which you can use in a page like so:
 
 ```
 <icon name="clock"></icon>
-```
-
-## Under-The-Hood
-A directory like this:
-
-```
-icons/
-├── clock.svg
-└── shopper.svg
-```
-
-With this gulp file:
-
-```
-var gulp = require( 'gulp' );
-var icons = require( 'gulp-angular-inline-svg' );
-
-gulp.task( 'icons', function() {
-  gulp.src( './icons/*.svg' )
-    .pipe( icons({
-      module: 'myApp',
-      constant: 'ICNS',
-      optimize: true,
-      file: 'icns.js',
-    }) )
-    .pipe( gulp.dest( './' ) );
-});
-```
-
-Will create a file called `icns.js` that looks like this:
-
-```
-angular
-  .module( 'myApp' )
-  .constant( 'ICNS', {
-    clock: '<svg version="1.0" encoding=" etc etc etc </path></svg>',
-    shopper: '<svg version="1.0" encoding=" etc etc etc </path></svg>',
-  });
 ```
