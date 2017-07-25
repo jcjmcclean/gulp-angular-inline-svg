@@ -63,7 +63,9 @@ angular
 	});
 
 function iconController(ICONS, $sce) {
-	this.markup = $sce.trustAsHtml(ICONS[this.name]);
+	if(ICONS && ICONS[this.name] && ICONS[this.name].data) {
+		this.markup = $sce.trustAsHtml(ICONS[this.name].data);
+	}
 }
 ```
 
