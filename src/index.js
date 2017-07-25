@@ -8,7 +8,7 @@ var
   path = require( 'path' ),
   SVGO = require( 'svgo' );
 
-function inlineSVG( options = {}) {
+function inlineSVG( options ) {
 
   if ( !options.module ) throw new Error( 'gulp-angular-inline-svg: Need a module option!' );
   if ( !options.file ) options.file = 'icons.js';
@@ -48,11 +48,9 @@ function inlineSVG( options = {}) {
 
   function endStream( callback ) {
 
-    var contents = `
-      angular
-        .module( '${ options.module }' )
-        .constant( '${ options.constant }', ${ JSON.stringify( icons, 2 ) } );
-    `;
+    var contents = `angular
+  .module('${ options.module }')
+  .constant('${ options.constant }', ${ JSON.stringify( icons, 2 ) });`;
 
     var file = new Vinyl({
       path: options.file,
